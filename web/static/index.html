@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P File Share</title>
+    <meta name="description" content="Peer-to-peer file sharing with a beautiful web interface">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+
+<header class="header">
+    <div class="header-brand">
+        <div class="logo-icon">⚡</div>
+        <h1>P2P Share</h1>
+    </div>
+    <div class="header-right">
+        <div class="connection-badge" id="connection-badge">
+            <span class="status-dot" id="status-dot"></span>
+            <span class="peer-id" id="peer-id-display">Connecting…</span>
+        </div>
+        <span class="tracker-badge" id="tracker-badge">—</span>
+    </div>
+</header>
+
+<!-- ── Main Container ──────────────────────────────────────────────────────── -->
+
+<div class="container">
+
+    <!-- Stats Row -->
+    <section class="stats-row" id="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon">📤</div>
+            <div class="stat-value" id="stat-shared">0</div>
+            <div class="stat-label">Files Shared</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🌐</div>
+            <div class="stat-value" id="stat-swarm">0</div>
+            <div class="stat-label">Swarm Files</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⬆️</div>
+            <div class="stat-value" id="stat-upload">—</div>
+            <div class="stat-label">Upload Limit</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⬇️</div>
+            <div class="stat-value" id="stat-download">—</div>
+            <div class="stat-label">Download Limit</div>
+        </div>
+    </section>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tab-nav">
+        <button class="tab-btn active" data-tab="swarm" id="tab-btn-swarm">
+            Swarm
+        </button>
+        <button class="tab-btn" data-tab="transfers" id="tab-btn-transfers">
+            Transfers
+        </button>
+        <button class="tab-btn" data-tab="share" id="tab-btn-share">
+            Share
+        </button>
+        <button class="tab-btn" data-tab="settings" id="tab-btn-settings">
+            Settings
+        </button>
+    </nav>
+
+    <!-- ── Swarm Tab ───────────────────────────────────────────────────────── -->
+
+    <section class="tab-panel active" id="tab-swarm">
+        <div class="panel-header">
+            <h2>Swarm Files</h2>
+            <button class="btn-icon" id="btn-refresh-swarm" title="Refresh">⟳</button>
+        </div>
+
+        <div class="file-table-wrap" id="swarm-table-wrap" style="display:none;">
+            <table class="file-table">
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Size</th>
+                        <th>Peers</th>
+                        <th>Chunks</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="swarm-tbody"></tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" id="swarm-empty">
+            <div class="empty-icon">🌐</div>
+            <p>No files in the swarm yet</p>
+            <p class="hint">Share a file to get started</p>
+        </div>
+    </section>
+
+    <!-- ── Transfers Tab ───────────────────────────────────────────────────── -->
+
+    <section class="tab-panel" id="tab-transfers">
+        <div class="panel-header">
+            <h2>Transfers</h2>
+        </div>
+
+        <div id="transfers-list"></div>
+
+        <div class="empty-state" id="transfers-empty">
+            <div class="empty-icon">📦</div>
+            <p>No active transfers</p>
+            <p class="hint">Download a file from the swarm</p>
+        </div>
+    </section>
+
+    <!-- ── Share Tab ───────────────────────────────────────────────────────── -->
+
+    <section class="tab-panel" id="tab-share">
+        <div class="panel-header">
+            <h2>Share a File</h2>
+        </div>
+
+        <!-- Drag & drop zone -->
+        <div class="drop-zone" id="drop-zone">
+            <div class="drop-icon">📁</div>
+            <p class="drop-text">Drag &amp; drop a file here</p>
+            <p class="drop-hint">or click to browse</p>
+            <input type="file" id="file-input" hidden>
+        </div>
+
+        <!-- Upload progress -->
+        <div id="upload-progress-area"></div>
+
+        <!-- Or: share by path -->
+        <div class="share-divider">or share from this machine</div>
+
+        <div class="path-share">
+            <input type="text" class="path-input" id="path-input"
+                   placeholder="/path/to/file.mkv" autocomplete="off">
+            <button class="btn btn-primary" id="btn-share-path">Share</button>
+        </div>
+    </section>
+
+    <!-- ── Settings Tab ────────────────────────────────────────────────────── -->
+
+    <section class="tab-panel" id="tab-settings">
+        <div class="panel-header">
+            <h2>Settings</h2>
+        </div>
+
+        <div class="settings-grid">
+            <!-- Upload throttle -->
+            <div class="setting-card">
+                <h3>⬆️ Upload Limit</h3>
+                <div class="throttle-current">
+                    Current: <span class="value" id="throttle-up-current">Unlimited</span>
+                </div>
+                <div class="throttle-input-row">
+                    <input type="text" class="throttle-input" id="throttle-up-input"
+                           placeholder="e.g. 50MB, 500KB, 0">
+                    <button class="btn btn-primary btn-sm" id="btn-apply-up">Apply</button>
+                </div>
+                <div class="throttle-presets" id="presets-up">
+                    <button class="preset-btn" data-val="0">∞</button>
+                    <button class="preset-btn" data-val="1MB">1 MB/s</button>
+                    <button class="preset-btn" data-val="10MB">10 MB/s</button>
+                    <button class="preset-btn" data-val="50MB">50 MB/s</button>
+                    <button class="preset-btn" data-val="100MB">100 MB/s</button>
+                </div>
+            </div>
+
+            <!-- Download throttle -->
+            <div class="setting-card">
+                <h3>⬇️ Download Limit</h3>
+                <div class="throttle-current">
+                    Current: <span class="value" id="throttle-down-current">Unlimited</span>
+                </div>
+                <div class="throttle-input-row">
+                    <input type="text" class="throttle-input" id="throttle-down-input"
+                           placeholder="e.g. 100MB, 500KB, 0">
+                    <button class="btn btn-primary btn-sm" id="btn-apply-down">Apply</button>
+                </div>
+                <div class="throttle-presets" id="presets-down">
+                    <button class="preset-btn" data-val="0">∞</button>
+                    <button class="preset-btn" data-val="1MB">1 MB/s</button>
+                    <button class="preset-btn" data-val="10MB">10 MB/s</button>
+                    <button class="preset-btn" data-val="50MB">50 MB/s</button>
+                    <button class="preset-btn" data-val="100MB">100 MB/s</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Peer info -->
+        <div class="setting-card">
+            <h3>📡 Peer Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Peer ID</span>
+                    <span class="info-value" id="info-peer-id">—</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Host IP</span>
+                    <span class="info-value" id="info-host">—</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">P2P Port</span>
+                    <span class="info-value" id="info-port">—</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tracker</span>
+                    <span class="info-value" id="info-tracker">—</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div><!-- /.container -->
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
