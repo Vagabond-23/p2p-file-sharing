@@ -112,7 +112,11 @@ class TrackerServer:
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((self.host, self.port))
         server.listen(64)
-        logger.info(f"Tracker listening on {self.host}:{self.port}")
+        logger.info(f"Tracker listening on {self.host}:{self.port} (TCP)")
+
+        # Start UDP broadcast listener for auto-discovery
+        udp_thread = threading.Thread(target=self._handle_udp_broadcast, daemon=True)
+        udp_thread.start()
 
         try:
             while True:
@@ -128,6 +132,24 @@ class TrackerServer:
             logger.info("Tracker shutting down.")
         finally:
             server.close()
+
+    def _handle_udp_broadcast(self) -> None:
+        """Listens for UDP broadcasts on port 5001 to support peer auto-discovery."""
+        udp_port = 5001
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind(("", udp_port))
+            logger.info(f"Tracker auto-discovery listening on UDP port {udp_port}")
+            
+            while True:
+                data, addr = sock.recvfrom(1024)
+                if data == b"TRACKER_DISCOVERY":
+                    # Reply with our TCP port
+                    reply = f"TRACKER_HERE:{self.port}".encode('utf-8')
+                    sock.sendto(reply, addr)
+        except Exception as e:
+            logger.error(f"UDP listener error: {e}")
 
     def _handle_peer(self, conn: socket.socket, addr) -> None:
         peer_id: Optional[str] = None

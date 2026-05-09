@@ -39,7 +39,8 @@ def main():
                         help="TCP port for P2P chunk transfers")
     parser.add_argument("--web-port",     type=int, default=8080,
                         help="HTTP port for the web UI (default: 8080)")
-    parser.add_argument("--tracker-host", default="127.0.0.1")
+    parser.add_argument("--tracker-host", default="auto",
+                        help="Tracker IP or 'auto' for local network discovery")
     parser.add_argument("--tracker-port", type=int, default=5000)
     parser.add_argument("--shared-dir",   default="shared_files")
     parser.add_argument("--download-dir", default="downloads")

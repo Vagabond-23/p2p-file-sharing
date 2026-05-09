@@ -1,0 +1,8 @@
+12:23:00 [INFO] web: Using host IP: 172.16.0.2
+12:23:00 [INFO] peer: Peer 'peer1' uploader bound on 0.0.0.0:6001 (advertising 172.16.0.2:6001)
+12:23:00 [INFO] peer.tracker_client: Looking for tracker on local network (UDP broadcast)...
+12:23:00 [INFO] peer.uploader: Uploader listening on 0.0.0.0:6001
+12:23:00 [INFO] peer.tracker_client: Auto-discovery successful. Found tracker at 10.196.43.155:5000
+12:23:00 [INFO] peer.tracker_client: Connected to tracker at 10.196.43.155:5000
+12:23:00 [INFO] peer.tracker_client: Registered with tracker as 'peer1'
+12:23:00 [INFO] web: Peer 'peer1' started — P2P on port 6001

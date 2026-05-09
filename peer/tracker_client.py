@@ -26,11 +26,43 @@ class TrackerClient:
         self._lock = threading.Lock()
 
     def connect(self) -> None:
+        if self.tracker_host == "auto":
+            self._auto_discover_tracker()
+
         self._sock = socket.create_connection(
             (self.tracker_host, self.tracker_port), timeout=CONNECT_TIMEOUT
         )
         self._sock.settimeout(None)  # blocking — no timeout on tracker ops
         logger.info(f"Connected to tracker at {self.tracker_host}:{self.tracker_port}")
+
+    def _auto_discover_tracker(self) -> None:
+        """Finds the tracker via UDP broadcast on the local network."""
+        logger.info("Looking for tracker on local network (UDP broadcast)...")
+        udp_port = 5001
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.settimeout(2.0)
+
+        for attempt in range(3):
+            try:
+                # Send broadcast
+                sock.sendto(b"TRACKER_DISCOVERY", ("<broadcast>", udp_port))
+                
+                # Wait for reply
+                data, addr = sock.recvfrom(1024)
+                if data.startswith(b"TRACKER_HERE:"):
+                    self.tracker_host = addr[0]
+                    self.tracker_port = int(data.split(b":")[1])
+                    logger.info(f"Auto-discovery successful. Found tracker at {self.tracker_host}:{self.tracker_port}")
+                    sock.close()
+                    return
+            except TimeoutError:
+                logger.debug(f"Auto-discovery attempt {attempt + 1} timed out...")
+            except OSError as e:
+                logger.debug(f"Auto-discovery broadcast error: {e}")
+                
+        sock.close()
+        raise ConnectionError("Auto-discovery failed: No tracker found on LAN after 3 attempts.")
 
     def disconnect(self) -> None:
         if self._sock:
