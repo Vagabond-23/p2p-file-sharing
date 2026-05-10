@@ -1,8 +1,6 @@
 """
 FastAPI backend for the P2P File Sharing Web UI.
 
-Wraps the existing Peer class with REST endpoints and a WebSocket
-for live download progress. No changes to core P2P logic.
 """
 
 import asyncio

@@ -1,10 +1,3 @@
-"""
-Downloader — parallel chunk fetching with:
-  - Resume: skips chunks already on disk in a .part file
-  - Rarest-first scheduling: prioritises chunks held by fewest peers
-  - Live progress: speed (MB/s), ETA, per-peer stats
-  - Download throttling: optional token bucket on inbound bytes
-"""
 
 import json
 import os
@@ -25,7 +18,7 @@ from peer.chunk_manager import FileManifest, verify_chunk
 logger = logging.getLogger(__name__)
 
 # ── .part file format ──────────────────────────────────────────────────────────
-# Sidecar JSON:  downloads/movie.mkv.part.json  →  {"done": [0,1,5,...]}
+# Sidecar JSON:  downloads/movie.mkv.part.json
 # Partial data:  downloads/movie.mkv.part
 # Both removed on successful completion.
 

@@ -1,26 +1,4 @@
 #!/usr/bin/env python3
-"""
-Peer node — run one instance per peer.
-
-Local testing (same machine):
-  python -m peer.peer --id peer1 --port 6001
-  python -m peer.peer --id peer2 --port 6002
-
-Across machines:
-  python -m peer.peer --id peer1 --port 6001 --tracker-host 192.168.1.10
-
-With bandwidth limits:
-  python -m peer.peer --id peer1 --port 6001 --upload-limit 50MB --download-limit 100MB
-
-Interactive commands:
-  share <filepath>              Share a file with the swarm
-  download <filename>           Download a file (resumes if interrupted)
-  list                          List all files in the swarm
-  status                        Show this peer's shared files
-  throttle up <limit|0>         Change upload limit at runtime  (e.g. 20MB, 0=off)
-  throttle down <limit|0>       Change download limit at runtime
-  quit                          Disconnect and exit
-"""
 
 import argparse
 import logging

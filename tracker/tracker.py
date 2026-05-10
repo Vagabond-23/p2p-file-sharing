@@ -2,13 +2,6 @@
 """
 Tracker server — run exactly one instance.
 
-Usage:
-  python -m tracker.tracker
-  python -m tracker.tracker --host 0.0.0.0 --port 5000
-
-The tracker maintains:
-  - peer registry: peer_id -> {host, port}
-  - file index:    filename -> {manifest, peer_id -> set of chunk indices}
 """
 
 import argparse

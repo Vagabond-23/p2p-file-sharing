@@ -36,3 +36,5 @@ downloads/
 shared_files/
 *.part
 *.part.json
+*.log
+*.pptx

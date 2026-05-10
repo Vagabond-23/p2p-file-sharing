@@ -92,15 +92,15 @@ def main():
     import uvicorn
 
     print()
-    print(f"  ╔═══════════════════════════════════════════════╗")
-    print(f"  ║  P2P File Sharing — Web UI                    ║")
-    print(f"  ║                                               ║")
-    print(f"  ║  Local:   http://localhost:{args.web_port:<18}║")
-    print(f"  ║  Network: http://{host}:{args.web_port:<20}   ║")
-    print(f"  ║                                               ║")
-    print(f"  ║  Peer ID: {args.id:<34}                       ║")
-    print(f"  ║  P2P Port: {args.port:<33}                    ║")
-    print(f"  ╚═══════════════════════════════════════════════╝")
+    print(f"  ╔══════════════════════════════════════════════════╗")
+    print(f"  ║  P2P File Sharing — Web UI                       ║")
+    print(f"  ║                                                  ║")
+    print(f"  ║  Local:   http://localhost:{args.web_port:<18}   ║")
+    print(f"  ║  Network: http://{host}:{args.web_port:<20}      ║")
+    print(f"  ║                                                  ║")
+    print(f"  ║  Peer ID: {args.id:<34}                          ║")
+    print(f"  ║  P2P Port: {args.port:<33}                       ║")
+    print(f"  ╚══════════════════════════════════════════════════╝")
     print()
 
     try:

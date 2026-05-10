@@ -1,17 +1,3 @@
-"""
-Token bucket rate limiter.
-
-A token bucket refills at `rate` bytes/sec. Callers call consume(n)
-before sending/receiving n bytes — it sleeps just long enough to
-stay within the configured rate. Thread-safe.
-
-Usage:
-    limiter = TokenBucket(rate=50 * 1024 * 1024)  # 50 MB/s
-    limiter.consume(len(data))
-    sock.sendall(data)
-
-Pass rate=0 (or None) to disable throttling entirely.
-"""
 
 import threading
 import time
