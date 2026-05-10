@@ -51,7 +51,6 @@ class TokenBucket:
     def parse_limit(s: str) -> float:
         """
         Parse a human-readable bandwidth string to bytes/sec.
-        Examples: '50MB', '10mb', '100KB', '1GB', '0' (unlimited)
         """
         s = s.strip().upper().replace(" ", "")
         if s in ("0", "UNLIMITED", ""):
